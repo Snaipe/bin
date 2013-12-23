@@ -9,8 +9,8 @@ if [ -z "$1" ]; then
   echo "[i] Usage: `basename $0` http://soundcloud.com/link_with_tracks_on_page";exit
 fi
 
-curlinstalled=`command -V curl &>/dev/null`
-wgetinstalled=`command -V wget &>/dev/null`
+curlinstalled=`command -v curl >/dev/null 2>&1`
+wgetinstalled=`command -v wget >/dev/null 2>&1`
 
 if $curlinstalled; then
   echo "[i] Using" `curl -V` | cut -c-21
@@ -27,7 +27,7 @@ if [ -z "$pages" ]; then
 fi
 
 echo "[i] Found $pages pages of songs!"
-for (( page=1; page <= $pages; page++ ))
+for page in `seq 1 $pages` 
 do
 if [ "$pages" = "1" ]; then
   if $curlinstalled; then
@@ -42,9 +42,9 @@ else
     this=`wget --max-redirect=1000 --trust-server-names -q -O- -U 'Mozilla/5.0' $1?page=$page`;
   fi
 fi
-songs=`echo "$this" | grep 'streamUrl' | tr '"' "\n" | sed 's/\\u0026amp;/\&/' | grep 'http://media.soundcloud.com/stream/' | sed 's/\\\\//'`;
+songs=`echo "$this" | grep 'streamUrl' | tr '"' "\n" | sed 's/\\u0026amp;/\&/g' | grep 'http://media.soundcloud.com/stream/' | sed 's/\\\\//'`;
 songcount=`echo "$songs" | wc -l`
-titles=`echo "$this" | grep 'title":"' | tr ',' "\n" | grep 'title' | cut -d '"' -f 4`
+titles=`echo "$this" | grep 'title":"' | tr ',' "\n" | sed 's/\\u0026amp;/\&/g' | grep 'title' | cut -d '"' -f 4`
 
 if [ -z "$songs" ]; then
   echo "[!] No songs found at $1/tracks?page=$page." && exit
@@ -52,7 +52,7 @@ fi
 
 echo "[+] Downloading $songcount songs from page $page..."
 
-for (( songid=1; songid <= $songcount; songid++ ))
+for songid in `seq 1 $songcount`
 do
   title=`echo "$titles" | sed -n "$songid"p`
   echo "[-] Downloading $title..."
