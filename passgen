@@ -1,0 +1,10 @@
+#!/usr/bin/ruby
+chars = ("a".."z").to_a + ("A".."Z").to_a + ("0".."9").to_a + "&~\#{[|\\^@]}(-_)=+$%*!:/;.,?".scan(/./)
+
+ARGV[0].to_i.times do
+    pass = ""
+    ARGV[1].to_i.times do
+        pass << chars[rand(chars.size - 1)]
+    end
+    puts pass
+end
