@@ -1,0 +1,7 @@
+#!/bin/sh
+level=`echo "$(xbacklight -get)" | sed -r 's/([0-9]+)\..+/\1/g'`
+if (( level != 0 )); then
+	xbacklight -set 0
+else
+	xbacklight -set 100
+fi
