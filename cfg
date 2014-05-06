@@ -8,12 +8,13 @@ case $1 in
 	lock)   mode=+i ;;
 	unlock) mode=-i ;;
 	*)
-		echo 'Usage : cfg <lock|unlock>.'
+		echo 'Usage : [sudo] cfg <lock|unlock>.'
 		exit 0
 	;;
 esac
 
 chattr $mode ~/.zshrc
+chattr -R $mode ~/.zsh
 chattr $mode ~/.zshenv
 chattr $mode ~/.vimrc
 chattr -R $mode ~/.git
